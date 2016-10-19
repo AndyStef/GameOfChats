@@ -1,0 +1,507 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8F400D001DB7BF4200E90473 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400CFF1DB7BF4200E90473 /* AppDelegate.swift */; };
+		8F400D021DB7BF4200E90473 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400D011DB7BF4200E90473 /* ViewController.swift */; };
+		8F400D051DB7BF4200E90473 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F400D031DB7BF4200E90473 /* Main.storyboard */; };
+		8F400D071DB7BF4200E90473 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F400D061DB7BF4200E90473 /* Assets.xcassets */; };
+		8F400D0A1DB7BF4200E90473 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F400D081DB7BF4200E90473 /* LaunchScreen.storyboard */; };
+		8F400D151DB7BF4200E90473 /* GameOfChatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400D141DB7BF4200E90473 /* GameOfChatsTests.swift */; };
+		8F400D201DB7BF4200E90473 /* GameOfChatsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400D1F1DB7BF4200E90473 /* GameOfChatsUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8F400D111DB7BF4200E90473 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F400CF41DB7BF4200E90473 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F400CFB1DB7BF4200E90473;
+			remoteInfo = GameOfChats;
+		};
+		8F400D1C1DB7BF4200E90473 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F400CF41DB7BF4200E90473 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F400CFB1DB7BF4200E90473;
+			remoteInfo = GameOfChats;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		8F400CFC1DB7BF4200E90473 /* GameOfChats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameOfChats.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F400CFF1DB7BF4200E90473 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8F400D011DB7BF4200E90473 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8F400D041DB7BF4200E90473 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8F400D061DB7BF4200E90473 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8F400D091DB7BF4200E90473 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8F400D0B1DB7BF4200E90473 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F400D101DB7BF4200E90473 /* GameOfChatsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameOfChatsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F400D141DB7BF4200E90473 /* GameOfChatsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOfChatsTests.swift; sourceTree = "<group>"; };
+		8F400D161DB7BF4200E90473 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8F400D1B1DB7BF4200E90473 /* GameOfChatsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameOfChatsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F400D1F1DB7BF4200E90473 /* GameOfChatsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOfChatsUITests.swift; sourceTree = "<group>"; };
+		8F400D211DB7BF4200E90473 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8F400CF91DB7BF4200E90473 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F400D0D1DB7BF4200E90473 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F400D181DB7BF4200E90473 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8F400CF31DB7BF4200E90473 = {
+			isa = PBXGroup;
+			children = (
+				8F400CFE1DB7BF4200E90473 /* GameOfChats */,
+				8F400D131DB7BF4200E90473 /* GameOfChatsTests */,
+				8F400D1E1DB7BF4200E90473 /* GameOfChatsUITests */,
+				8F400CFD1DB7BF4200E90473 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8F400CFD1DB7BF4200E90473 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8F400CFC1DB7BF4200E90473 /* GameOfChats.app */,
+				8F400D101DB7BF4200E90473 /* GameOfChatsTests.xctest */,
+				8F400D1B1DB7BF4200E90473 /* GameOfChatsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8F400CFE1DB7BF4200E90473 /* GameOfChats */ = {
+			isa = PBXGroup;
+			children = (
+				8F400CFF1DB7BF4200E90473 /* AppDelegate.swift */,
+				8F400D011DB7BF4200E90473 /* ViewController.swift */,
+				8F400D031DB7BF4200E90473 /* Main.storyboard */,
+				8F400D061DB7BF4200E90473 /* Assets.xcassets */,
+				8F400D081DB7BF4200E90473 /* LaunchScreen.storyboard */,
+				8F400D0B1DB7BF4200E90473 /* Info.plist */,
+			);
+			path = GameOfChats;
+			sourceTree = "<group>";
+		};
+		8F400D131DB7BF4200E90473 /* GameOfChatsTests */ = {
+			isa = PBXGroup;
+			children = (
+				8F400D141DB7BF4200E90473 /* GameOfChatsTests.swift */,
+				8F400D161DB7BF4200E90473 /* Info.plist */,
+			);
+			path = GameOfChatsTests;
+			sourceTree = "<group>";
+		};
+		8F400D1E1DB7BF4200E90473 /* GameOfChatsUITests */ = {
+			isa = PBXGroup;
+			children = (
+				8F400D1F1DB7BF4200E90473 /* GameOfChatsUITests.swift */,
+				8F400D211DB7BF4200E90473 /* Info.plist */,
+			);
+			path = GameOfChatsUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8F400CFB1DB7BF4200E90473 /* GameOfChats */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F400D241DB7BF4200E90473 /* Build configuration list for PBXNativeTarget "GameOfChats" */;
+			buildPhases = (
+				8F400CF81DB7BF4200E90473 /* Sources */,
+				8F400CF91DB7BF4200E90473 /* Frameworks */,
+				8F400CFA1DB7BF4200E90473 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GameOfChats;
+			productName = GameOfChats;
+			productReference = 8F400CFC1DB7BF4200E90473 /* GameOfChats.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8F400D0F1DB7BF4200E90473 /* GameOfChatsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F400D271DB7BF4200E90473 /* Build configuration list for PBXNativeTarget "GameOfChatsTests" */;
+			buildPhases = (
+				8F400D0C1DB7BF4200E90473 /* Sources */,
+				8F400D0D1DB7BF4200E90473 /* Frameworks */,
+				8F400D0E1DB7BF4200E90473 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8F400D121DB7BF4200E90473 /* PBXTargetDependency */,
+			);
+			name = GameOfChatsTests;
+			productName = GameOfChatsTests;
+			productReference = 8F400D101DB7BF4200E90473 /* GameOfChatsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8F400D1A1DB7BF4200E90473 /* GameOfChatsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F400D2A1DB7BF4200E90473 /* Build configuration list for PBXNativeTarget "GameOfChatsUITests" */;
+			buildPhases = (
+				8F400D171DB7BF4200E90473 /* Sources */,
+				8F400D181DB7BF4200E90473 /* Frameworks */,
+				8F400D191DB7BF4200E90473 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8F400D1D1DB7BF4200E90473 /* PBXTargetDependency */,
+			);
+			name = GameOfChatsUITests;
+			productName = GameOfChatsUITests;
+			productReference = 8F400D1B1DB7BF4200E90473 /* GameOfChatsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8F400CF41DB7BF4200E90473 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Andy Stef";
+				TargetAttributes = {
+					8F400CFB1DB7BF4200E90473 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					8F400D0F1DB7BF4200E90473 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 8F400CFB1DB7BF4200E90473;
+					};
+					8F400D1A1DB7BF4200E90473 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 8F400CFB1DB7BF4200E90473;
+					};
+				};
+			};
+			buildConfigurationList = 8F400CF71DB7BF4200E90473 /* Build configuration list for PBXProject "GameOfChats" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8F400CF31DB7BF4200E90473;
+			productRefGroup = 8F400CFD1DB7BF4200E90473 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8F400CFB1DB7BF4200E90473 /* GameOfChats */,
+				8F400D0F1DB7BF4200E90473 /* GameOfChatsTests */,
+				8F400D1A1DB7BF4200E90473 /* GameOfChatsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8F400CFA1DB7BF4200E90473 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F400D0A1DB7BF4200E90473 /* LaunchScreen.storyboard in Resources */,
+				8F400D071DB7BF4200E90473 /* Assets.xcassets in Resources */,
+				8F400D051DB7BF4200E90473 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F400D0E1DB7BF4200E90473 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F400D191DB7BF4200E90473 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8F400CF81DB7BF4200E90473 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F400D021DB7BF4200E90473 /* ViewController.swift in Sources */,
+				8F400D001DB7BF4200E90473 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F400D0C1DB7BF4200E90473 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F400D151DB7BF4200E90473 /* GameOfChatsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F400D171DB7BF4200E90473 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F400D201DB7BF4200E90473 /* GameOfChatsUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8F400D121DB7BF4200E90473 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F400CFB1DB7BF4200E90473 /* GameOfChats */;
+			targetProxy = 8F400D111DB7BF4200E90473 /* PBXContainerItemProxy */;
+		};
+		8F400D1D1DB7BF4200E90473 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F400CFB1DB7BF4200E90473 /* GameOfChats */;
+			targetProxy = 8F400D1C1DB7BF4200E90473 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		8F400D031DB7BF4200E90473 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8F400D041DB7BF4200E90473 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8F400D081DB7BF4200E90473 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8F400D091DB7BF4200E90473 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8F400D221DB7BF4200E90473 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8F400D231DB7BF4200E90473 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		8F400D251DB7BF4200E90473 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = GameOfChats/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AS.GameOfChats;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8F400D261DB7BF4200E90473 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = GameOfChats/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AS.GameOfChats;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		8F400D281DB7BF4200E90473 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = GameOfChatsTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AS.GameOfChatsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GameOfChats.app/GameOfChats";
+			};
+			name = Debug;
+		};
+		8F400D291DB7BF4200E90473 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = GameOfChatsTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AS.GameOfChatsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GameOfChats.app/GameOfChats";
+			};
+			name = Release;
+		};
+		8F400D2B1DB7BF4200E90473 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = GameOfChatsUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AS.GameOfChatsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = GameOfChats;
+			};
+			name = Debug;
+		};
+		8F400D2C1DB7BF4200E90473 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = GameOfChatsUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = AS.GameOfChatsUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = GameOfChats;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8F400CF71DB7BF4200E90473 /* Build configuration list for PBXProject "GameOfChats" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F400D221DB7BF4200E90473 /* Debug */,
+				8F400D231DB7BF4200E90473 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8F400D241DB7BF4200E90473 /* Build configuration list for PBXNativeTarget "GameOfChats" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F400D251DB7BF4200E90473 /* Debug */,
+				8F400D261DB7BF4200E90473 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		8F400D271DB7BF4200E90473 /* Build configuration list for PBXNativeTarget "GameOfChatsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F400D281DB7BF4200E90473 /* Debug */,
+				8F400D291DB7BF4200E90473 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		8F400D2A1DB7BF4200E90473 /* Build configuration list for PBXNativeTarget "GameOfChatsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F400D2B1DB7BF4200E90473 /* Debug */,
+				8F400D2C1DB7BF4200E90473 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8F400CF41DB7BF4200E90473 /* Project object */;
+}
