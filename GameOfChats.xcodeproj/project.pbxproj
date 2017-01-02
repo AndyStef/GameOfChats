@@ -14,6 +14,8 @@
 		8F400D0A1DB7BF4200E90473 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F400D081DB7BF4200E90473 /* LaunchScreen.storyboard */; };
 		8F400D151DB7BF4200E90473 /* GameOfChatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400D141DB7BF4200E90473 /* GameOfChatsTests.swift */; };
 		8F400D201DB7BF4200E90473 /* GameOfChatsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400D1F1DB7BF4200E90473 /* GameOfChatsUITests.swift */; };
+		8FB413271E1B055300B39D89 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB413261E1B055300B39D89 /* LoginViewController.swift */; };
+		8FB4132A1E1B05DF00B39D89 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB413291E1B05DF00B39D89 /* UIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		8F400D1B1DB7BF4200E90473 /* GameOfChatsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameOfChatsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F400D1F1DB7BF4200E90473 /* GameOfChatsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOfChatsUITests.swift; sourceTree = "<group>"; };
 		8F400D211DB7BF4200E90473 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8FB413261E1B055300B39D89 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		8FB413291E1B05DF00B39D89 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,12 +101,11 @@
 		8F400CFE1DB7BF4200E90473 /* GameOfChats */ = {
 			isa = PBXGroup;
 			children = (
-				8F400CFF1DB7BF4200E90473 /* AppDelegate.swift */,
-				8F400D011DB7BF4200E90473 /* ViewController.swift */,
-				8F400D031DB7BF4200E90473 /* Main.storyboard */,
-				8F400D061DB7BF4200E90473 /* Assets.xcassets */,
-				8F400D081DB7BF4200E90473 /* LaunchScreen.storyboard */,
-				8F400D0B1DB7BF4200E90473 /* Info.plist */,
+				8FB413281E1B05CB00B39D89 /* Extensions */,
+				8FB413241E1B03F400B39D89 /* View */,
+				8FB413231E1B03EC00B39D89 /* Model */,
+				8FB413221E1B03E200B39D89 /* Controller */,
+				8FB413251E1B04E300B39D89 /* Supporting files */,
 			);
 			path = GameOfChats;
 			sourceTree = "<group>";
@@ -123,6 +126,49 @@
 				8F400D211DB7BF4200E90473 /* Info.plist */,
 			);
 			path = GameOfChatsUITests;
+			sourceTree = "<group>";
+		};
+		8FB413221E1B03E200B39D89 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				8F400D011DB7BF4200E90473 /* ViewController.swift */,
+				8FB413261E1B055300B39D89 /* LoginViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		8FB413231E1B03EC00B39D89 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		8FB413241E1B03F400B39D89 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				8F400D031DB7BF4200E90473 /* Main.storyboard */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		8FB413251E1B04E300B39D89 /* Supporting files */ = {
+			isa = PBXGroup;
+			children = (
+				8F400CFF1DB7BF4200E90473 /* AppDelegate.swift */,
+				8F400D0B1DB7BF4200E90473 /* Info.plist */,
+				8F400D061DB7BF4200E90473 /* Assets.xcassets */,
+				8F400D081DB7BF4200E90473 /* LaunchScreen.storyboard */,
+			);
+			name = "Supporting files";
+			sourceTree = "<group>";
+		};
+		8FB413281E1B05CB00B39D89 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8FB413291E1B05DF00B39D89 /* UIColor.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -188,7 +234,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Andy Stef";
 				TargetAttributes = {
 					8F400CFB1DB7BF4200E90473 = {
@@ -259,6 +305,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FB413271E1B055300B39D89 /* LoginViewController.swift in Sources */,
+				8FB4132A1E1B05DF00B39D89 /* UIColor.swift in Sources */,
 				8F400D021DB7BF4200E90473 /* ViewController.swift in Sources */,
 				8F400D001DB7BF4200E90473 /* AppDelegate.swift in Sources */,
 			);
@@ -329,8 +377,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -375,8 +425,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -395,6 +447,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

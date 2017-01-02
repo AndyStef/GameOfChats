@@ -8,10 +8,21 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogoutTap))
     }
+
 }
 
+//MARK: - Events and handlers
+extension ViewController {
+
+    func handleLogoutTap() {
+        let loginViewController = LoginViewController()
+        present(loginViewController, animated: true, completion: nil)
+    }
+}
