@@ -75,7 +75,7 @@ class LoginViewController: UIViewController {
 
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Wolf")
+        imageView.image = UIImage(named: "wolf2")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
 
