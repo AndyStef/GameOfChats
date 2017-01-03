@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class LoginViewController: UIViewController {
 
@@ -148,6 +149,8 @@ class LoginViewController: UIViewController {
         registerButton.topAnchor.constraint(equalTo: inputsContainerView.bottomAnchor, constant: 12).isActive = true
         registerButton.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -24).isActive = true
         registerButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
+        registerButton.addTarget(self, action: #selector(handleRegisterTap), for: .touchUpInside)
     }
 
     func setupProfileImageView() {
@@ -161,5 +164,42 @@ class LoginViewController: UIViewController {
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
+    }
+}
+
+//MARK: - Events and handlers
+extension LoginViewController {
+
+    func handleRegisterTap() {
+        guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else {
+            //TODO: - Handle this propertly
+            print("Please enter your email or pass")
+            return
+        }
+
+        FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user, error) in
+
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+
+            guard let uid = user?.uid else {
+                return
+            }
+
+            //succesful authentification
+            let reference = FIRDatabase.database().reference(fromURL: "https://got-chat.firebaseio.com/")
+            let usersReference = reference.child("users").child(uid)
+            let values = ["name" : name, "email" : email]
+            usersReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }
+
+                print("Successfully registered new user")
+            })
+        })
     }
 }
