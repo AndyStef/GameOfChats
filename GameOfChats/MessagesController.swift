@@ -9,20 +9,29 @@
 import UIKit
 import Firebase
 
-class ViewController: UITableViewController {
+class MessagesController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogoutTap))
-    }
 
+        if FIRAuth.auth()?.currentUser?.uid == nil {
+            perform(#selector(handleLogoutTap), with: nil, afterDelay: 0)
+        }
+    }
 }
 
 //MARK: - Events and handlers
 extension ViewController {
 
     func handleLogoutTap() {
+        do {
+            try FIRAuth.auth()?.signOut()
+        } catch let logoutError {
+            print(logoutError)
+        }
+
         let loginViewController = LoginViewController()
         present(loginViewController, animated: true, completion: nil)
     }
