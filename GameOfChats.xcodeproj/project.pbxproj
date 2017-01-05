@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		06A6F6B72E0C3E9B4A8F57E3 /* Pods_GameOfChats.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7CE1B126EEC1B80858B524 /* Pods_GameOfChats.framework */; };
 		8F400D001DB7BF4200E90473 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400CFF1DB7BF4200E90473 /* AppDelegate.swift */; };
-		8F400D021DB7BF4200E90473 /* MessagesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400D011DB7BF4200E90473 /* MessagesController.swift */; };
+		8F400D021DB7BF4200E90473 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F400D011DB7BF4200E90473 /* MessagesViewController.swift */; };
 		8F400D051DB7BF4200E90473 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F400D031DB7BF4200E90473 /* Main.storyboard */; };
 		8F400D071DB7BF4200E90473 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8F400D061DB7BF4200E90473 /* Assets.xcassets */; };
 		8F400D0A1DB7BF4200E90473 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8F400D081DB7BF4200E90473 /* LaunchScreen.storyboard */; };
@@ -18,6 +18,10 @@
 		8FB413271E1B055300B39D89 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB413261E1B055300B39D89 /* LoginViewController.swift */; };
 		8FB4132A1E1B05DF00B39D89 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB413291E1B05DF00B39D89 /* UIColor.swift */; };
 		8FB4132C1E1BC70900B39D89 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8FB4132B1E1BC70900B39D89 /* GoogleService-Info.plist */; };
+		8FB413301E1D55B800B39D89 /* NewMessageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB4132F1E1D55B800B39D89 /* NewMessageTableViewController.swift */; };
+		8FB413321E1D5C4C00B39D89 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB413311E1D5C4C00B39D89 /* User.swift */; };
+		8FB413341E1D638900B39D89 /* UserTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB413331E1D638900B39D89 /* UserTableViewCell.swift */; };
+		8FB413371E1EBB8A00B39D89 /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB413361E1EBB8A00B39D89 /* UIImageView.swift */; };
 		985154FB0A4E604E747E0D40 /* Pods_GameOfChatsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4F1745DAEACD2A072415A4 /* Pods_GameOfChatsUITests.framework */; };
 		A60455372DC22FEACEDAE961 /* Pods_GameOfChatsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F2E4CE4084526B0DD2BF1032 /* Pods_GameOfChatsTests.framework */; };
 /* End PBXBuildFile section */
@@ -48,7 +52,7 @@
 		6E7CE1B126EEC1B80858B524 /* Pods_GameOfChats.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GameOfChats.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F400CFC1DB7BF4200E90473 /* GameOfChats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GameOfChats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F400CFF1DB7BF4200E90473 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8F400D011DB7BF4200E90473 /* MessagesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesController.swift; sourceTree = "<group>"; };
+		8F400D011DB7BF4200E90473 /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		8F400D041DB7BF4200E90473 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8F400D061DB7BF4200E90473 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8F400D091DB7BF4200E90473 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -62,6 +66,10 @@
 		8FB413261E1B055300B39D89 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		8FB413291E1B05DF00B39D89 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		8FB4132B1E1BC70900B39D89 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8FB4132F1E1D55B800B39D89 /* NewMessageTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageTableViewController.swift; sourceTree = "<group>"; };
+		8FB413311E1D5C4C00B39D89 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		8FB413331E1D638900B39D89 /* UserTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableViewCell.swift; sourceTree = "<group>"; };
+		8FB413361E1EBB8A00B39D89 /* UIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageView.swift; sourceTree = "<group>"; };
 		CB4F1745DAEACD2A072415A4 /* Pods_GameOfChatsUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GameOfChatsUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFCE85DED7412614B8837A63 /* Pods-GameOfChatsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GameOfChatsTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GameOfChatsTests/Pods-GameOfChatsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F2E4CE4084526B0DD2BF1032 /* Pods_GameOfChatsTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GameOfChatsTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,7 +168,8 @@
 		8FB413221E1B03E200B39D89 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				8F400D011DB7BF4200E90473 /* MessagesController.swift */,
+				8F400D011DB7BF4200E90473 /* MessagesViewController.swift */,
+				8FB4132F1E1D55B800B39D89 /* NewMessageTableViewController.swift */,
 				8FB413261E1B055300B39D89 /* LoginViewController.swift */,
 			);
 			name = Controller;
@@ -169,6 +178,7 @@
 		8FB413231E1B03EC00B39D89 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				8FB413311E1D5C4C00B39D89 /* User.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -177,6 +187,7 @@
 			isa = PBXGroup;
 			children = (
 				8F400D031DB7BF4200E90473 /* Main.storyboard */,
+				8FB413331E1D638900B39D89 /* UserTableViewCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -197,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				8FB413291E1B05DF00B39D89 /* UIColor.swift */,
+				8FB413361E1EBB8A00B39D89 /* UIImageView.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -480,10 +492,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FB413371E1EBB8A00B39D89 /* UIImageView.swift in Sources */,
 				8FB413271E1B055300B39D89 /* LoginViewController.swift in Sources */,
 				8FB4132A1E1B05DF00B39D89 /* UIColor.swift in Sources */,
-				8F400D021DB7BF4200E90473 /* MessagesController.swift in Sources */,
+				8FB413341E1D638900B39D89 /* UserTableViewCell.swift in Sources */,
+				8FB413321E1D5C4C00B39D89 /* User.swift in Sources */,
+				8F400D021DB7BF4200E90473 /* MessagesViewController.swift in Sources */,
 				8F400D001DB7BF4200E90473 /* AppDelegate.swift in Sources */,
+				8FB413301E1D55B800B39D89 /* NewMessageTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
