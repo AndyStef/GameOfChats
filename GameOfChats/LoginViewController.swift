@@ -81,6 +81,7 @@ class LoginViewController: UIViewController {
         imageView.image = UIImage(named: "wolf2")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.isUserInteractionEnabled = true
 
         return imageView
     }()
@@ -177,6 +178,7 @@ class LoginViewController: UIViewController {
 
     func setupProfileImageView() {
         view.addSubview(profileImageView)
+        profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleProfileImageTap)))
 
         profileImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         profileImageView.bottomAnchor.constraint(equalTo: loginRegisterSegmentedControl.topAnchor, constant: -12).isActive = true
@@ -246,19 +248,37 @@ extension LoginViewController {
                 return
             }
 
-            //succesful authentification
-            //TODO: - Refactor this out to client API class (maybe)
-            let reference = FIRDatabase.database().reference(fromURL: "https://got-chat.firebaseio.com/")
-            let usersReference = reference.child("users").child(uid)
-            let values = ["name" : name, "email" : email]
-            usersReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
-                if let error = error {
-                    print(error.localizedDescription)
-                    return
-                }
+            let imageName = NSUUID().uuidString
+            let storageReference = FIRStorage.storage().reference().child("profile_images").child("\(imageName).png")
+            if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!) {
+                storageReference.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                    if let error = error {
+                        print(error.localizedDescription)
+                        return
+                    }
 
-                self.dismiss(animated: true, completion: nil)
-            })
+                    if let profileImageUrl = metadata?.downloadURL()?.absoluteString {
+                        let values = ["name" : name, "email" : email, "profileImageUrl" : profileImageUrl]
+                        self.registerUserIntoDatabase(uid: uid, values: values as [String : AnyObject])
+                    }
+                })
+            }
+        })
+    }
+
+    private func registerUserIntoDatabase(uid: String, values: [String : AnyObject]) {
+        //succesful authentification
+        //TODO: - Refactor this out to client API class (maybe)
+        let reference = FIRDatabase.database().reference(fromURL: "https://got-chat.firebaseio.com/")
+        let usersReference = reference.child("users").child(uid)
+
+        usersReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+
+            self.dismiss(animated: true, completion: nil)
         })
     }
 
@@ -280,5 +300,36 @@ extension LoginViewController {
         passwordTextFieldheightAnchor?.isActive = false
         passwordTextFieldheightAnchor = passwordTextField.heightAnchor.constraint(equalTo: inputsContainerView.heightAnchor, multiplier: loginRegisterSegmentedControl.selectedSegmentIndex == 0 ? 1 / 2 : 1 / 3)
         passwordTextFieldheightAnchor?.isActive = true
+    }
+
+    func handleProfileImageTap() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true, completion: nil)
+    }
+}
+
+//MARK: - ImagePicker delegate
+extension LoginViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        print("cancelled picking image")
+        dismiss(animated: true, completion: nil)
+    }
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        var selectedImageFromPicker: UIImage?
+
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            selectedImageFromPicker = editedImage
+        } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            selectedImageFromPicker = originalImage
+        }
+
+        if let selectedImage = selectedImageFromPicker {
+            profileImageView.image = selectedImage
+        }
+
+        dismiss(animated: true, completion: nil)
     }
 }
