@@ -248,6 +248,7 @@ extension LoginViewController {
                 return
             }
 
+            //succesful authentification
             let imageName = NSUUID().uuidString
             let storageReference = FIRStorage.storage().reference().child("profile_images").child("\(imageName).png")
             if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!) {
@@ -267,7 +268,6 @@ extension LoginViewController {
     }
 
     private func registerUserIntoDatabase(uid: String, values: [String : AnyObject]) {
-        //succesful authentification
         //TODO: - Refactor this out to client API class (maybe)
         let reference = FIRDatabase.database().reference(fromURL: "https://got-chat.firebaseio.com/")
         let usersReference = reference.child("users").child(uid)
