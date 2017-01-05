@@ -46,7 +46,6 @@ class MessagesViewController: UITableViewController {
     }
 
     func setupNavigationBarWith(user: User) {
-        self.navigationItem.title = user.name
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
 
@@ -88,6 +87,8 @@ class MessagesViewController: UITableViewController {
         containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
 
         self.navigationItem.titleView = titleView
+
+        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTitleViewTap)))
     }
 }
 
@@ -111,5 +112,10 @@ extension MessagesViewController {
         let newMessageController = NewMessageTableViewController()
         let navigationController = UINavigationController(rootViewController: newMessageController)
         present(navigationController, animated: true, completion: nil)
+    }
+
+    func handleTitleViewTap() {
+        let chatLogContoller = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(chatLogContoller, animated: true)
     }
 }
