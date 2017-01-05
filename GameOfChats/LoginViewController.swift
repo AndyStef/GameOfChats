@@ -282,7 +282,10 @@ extension LoginViewController {
 
             //TODO: - i should defenetily do this with delegate or notification or in viewDidAppear
            // self.messagesController?.fetchUser()
-            self.messagesController?.navigationItem.title = values["name"] as? String
+           // self.messagesController?.navigationItem.title = values["name"] as? String
+            let user = User()
+            user.setValuesForKeys(values)
+            self.messagesController?.setupNavigationBarWith(user: user)
             self.dismiss(animated: true, completion: nil)
         })
     }

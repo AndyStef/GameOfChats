@@ -38,9 +38,56 @@ class MessagesViewController: UITableViewController {
         FIRDatabase.database().reference().child("users").child(uid).observe(.value, with: { (snapshot) in
             //TODO: - i should defenitely do this when view view is appeared
             if let dictionary = snapshot.value as? [String : AnyObject] {
-                self.navigationItem.title = dictionary["name"] as? String
+                let user = User()
+                user.setValuesForKeys(dictionary)
+                self.setupNavigationBarWith(user: user)
             }
         }, withCancel: nil)
+    }
+
+    func setupNavigationBarWith(user: User) {
+        self.navigationItem.title = user.name
+        let titleView = UIView()
+        titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+
+        //TODO: - this centers view but not cut very long names
+        //Magic part
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        titleView.addSubview(containerView)
+
+        //Image part
+        let profileImageView = UIImageView()
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.layer.cornerRadius = 17
+        profileImageView.clipsToBounds = true
+
+        if let profileImageUrl = user.profileImageUrl {
+            profileImageView.loadImageUsingCacheWith(urlString: profileImageUrl)
+        }
+
+        containerView.addSubview(profileImageView)
+        profileImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 2).isActive = true
+        profileImageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        profileImageView.widthAnchor.constraint(equalToConstant: 35).isActive = true
+        profileImageView.heightAnchor.constraint(equalToConstant: 35).isActive = true
+
+        //Name part
+        let nameLabel = UILabel()
+        nameLabel.text = user.name
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        containerView.addSubview(nameLabel)
+        nameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
+        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        nameLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+        nameLabel.heightAnchor.constraint(equalToConstant: 35).isActive = true
+
+        containerView.centerXAnchor.constraint(equalTo: titleView.centerXAnchor).isActive = true
+        containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
+
+        self.navigationItem.titleView = titleView
     }
 }
 
