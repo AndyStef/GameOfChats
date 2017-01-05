@@ -25,15 +25,22 @@ class MessagesViewController: UITableViewController {
         if FIRAuth.auth()?.currentUser?.uid == nil {
             perform(#selector(handleLogoutTap), with: nil, afterDelay: 0)
         } else {
-            //fetch users
-            let uid = FIRAuth.auth()?.currentUser?.uid
-            FIRDatabase.database().reference().child("users").child(uid!).observe(.value, with: { (snapshot) in
-                //TODO: - i should defenitely do this when view view is appeared
-                if let dictionary = snapshot.value as? [String : AnyObject] {
-                    self.navigationItem.title = dictionary["name"] as? String
-                }
-            }, withCancel: nil)
+            fetchUser()
         }
+    }
+
+    //TODO: - move to client API
+    func fetchUser() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+
+        FIRDatabase.database().reference().child("users").child(uid).observe(.value, with: { (snapshot) in
+            //TODO: - i should defenitely do this when view view is appeared
+            if let dictionary = snapshot.value as? [String : AnyObject] {
+                self.navigationItem.title = dictionary["name"] as? String
+            }
+        }, withCancel: nil)
     }
 }
 
@@ -48,6 +55,8 @@ extension MessagesViewController {
         }
 
         let loginViewController = LoginViewController()
+        //MARK: - thats not really cool
+        loginViewController.messagesController = self
         present(loginViewController, animated: true, completion: nil)
     }
 

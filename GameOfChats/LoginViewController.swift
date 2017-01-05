@@ -12,6 +12,7 @@ import Firebase
 class LoginViewController: UIViewController {
 
     //MARK: - Variables
+    var messagesController: MessagesViewController?
 
     //MARK: Views
     let inputsContainerView: UIView = {
@@ -278,6 +279,8 @@ extension LoginViewController {
                 return
             }
 
+            //TODO: - i should defenetily do this with delegate or notification or in viewDidAppear
+            self.messagesController?.fetchUser()
             self.dismiss(animated: true, completion: nil)
         })
     }
