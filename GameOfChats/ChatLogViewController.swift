@@ -7,16 +7,17 @@
 //
 
 import UIKit
+import Firebase
 
 //TODO: Handle keyboard and move view up and down
 class ChatLogViewController: UICollectionViewController {
 
     //MARK: - Variables
-    let inputTextField: UITextField = {
+    lazy var inputTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Type your message here"
         textField.translatesAutoresizingMaskIntoConstraints = false
-
+        textField.delegate = self
 
         return textField
     }()
@@ -77,6 +78,17 @@ class ChatLogViewController: UICollectionViewController {
 //MARK: - Events and handlers
 extension ChatLogViewController {
     func handleSendTap() {
+        let reference = FIRDatabase.database().reference().child("messages")
+        let childReference = reference.childByAutoId()
+        let values = ["text" : inputTextField.text]
+        childReference.updateChildValues(values)
+    }
+}
 
+//MARK: - textField delegate 
+extension ChatLogViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        handleSendTap()
+        return true
     }
 }
