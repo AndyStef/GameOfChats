@@ -227,6 +227,7 @@ extension LoginViewController {
                 return
             }
 
+            self.messagesController?.fetchUser()
             self.dismiss(animated: true, completion: nil)
         })
     }
@@ -251,8 +252,8 @@ extension LoginViewController {
 
             //succesful authentification
             let imageName = NSUUID().uuidString
-            let storageReference = FIRStorage.storage().reference().child("profile_images").child("\(imageName).png")
-            if let uploadData = UIImagePNGRepresentation(self.profileImageView.image!) {
+            let storageReference = FIRStorage.storage().reference().child("profile_images").child("\(imageName).jpg")
+            if let profileImage = self.profileImageView.image, let uploadData = UIImageJPEGRepresentation(profileImage, 0.1) {
                 storageReference.put(uploadData, metadata: nil, completion: { (metadata, error) in
                     if let error = error {
                         print(error.localizedDescription)
@@ -280,7 +281,8 @@ extension LoginViewController {
             }
 
             //TODO: - i should defenetily do this with delegate or notification or in viewDidAppear
-            self.messagesController?.fetchUser()
+           // self.messagesController?.fetchUser()
+            self.messagesController?.navigationItem.title = values["name"] as? String
             self.dismiss(animated: true, completion: nil)
         })
     }
