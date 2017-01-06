@@ -11,6 +11,8 @@ import Firebase
 
 class UserTableViewCell: UITableViewCell {
 
+    //MARK: - Variables
+    //MARK: model
     var message: Message? {
         didSet {
             if let toId = message?.toId {
@@ -25,8 +27,15 @@ class UserTableViewCell: UITableViewCell {
                     }
                 })
             }
-            
+
             self.detailTextLabel?.text = message?.text
+
+            if let timestamp = message?.timestamp {
+                let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "hh:mm:ss a"
+                self.timeLabel.text = dateFormatter.string(from: date)
+            }
         }
     }
 
@@ -38,9 +47,13 @@ class UserTableViewCell: UITableViewCell {
             if let profileImageUrl = user?.profileImageUrl {
                 self.profileImageView.loadImageUsingCacheWith(urlString: profileImageUrl)
             }
+
+            //TODO: Ask someone what is better to set its hidden or just remove
+            timeLabel.removeFromSuperview()
         }
     }
 
+    //MARK: view
     let profileImageView: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = 24
@@ -51,6 +64,17 @@ class UserTableViewCell: UITableViewCell {
         return image
     }()
 
+    let timeLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "HH:MM:SS"
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.textColor = UIColor.lightGray
+
+        return label
+    }()
+
+    //MARK: - Cell itself
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
 
@@ -60,6 +84,13 @@ class UserTableViewCell: UITableViewCell {
         profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         profileImageView.widthAnchor.constraint(equalToConstant: 48).isActive = true
         profileImageView.heightAnchor.constraint(equalToConstant: 48).isActive = true
+
+        addSubview(timeLabel)
+
+        timeLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 8).isActive = true
+        timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 18).isActive = true
+        timeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        timeLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -13,6 +13,7 @@ class MessagesViewController: UITableViewController {
 
     //MARK: - Variables
     var messages = [Message]()
+    var messagesDictionary = [String : Message]()
     let cellId = "cellId"
 
     //MARK: - View lifecycle
@@ -154,7 +155,12 @@ extension MessagesViewController {
             if let dictionary = snapshot.value as? [String : AnyObject] {
                 let message = Message()
                 message.setValuesForKeys(dictionary)
-                self.messages.append(message)
+
+                if let receiverId = message.toId {
+                    self.messagesDictionary[receiverId] = message
+                    self.messages = Array(self.messagesDictionary.values)
+                    self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
+                }
 
                 //TODO: Google why its not crashing
                 DispatchQueue.main.async {
