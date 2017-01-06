@@ -15,19 +15,7 @@ class UserTableViewCell: UITableViewCell {
     //MARK: model
     var message: Message? {
         didSet {
-            if let toId = message?.toId {
-                let reference = FIRDatabase.database().reference().child("users").child(toId)
-                reference.observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let dictionary = snapshot.value as? [String : AnyObject] {
-                        self.textLabel?.text = dictionary["name"] as? String
-
-                        if let profileImageUrl = dictionary["profileImageUrl"] as? String {
-                            self.profileImageView.loadImageUsingCacheWith(urlString: profileImageUrl)
-                        }
-                    }
-                })
-            }
-
+            setupNameAndAvatar()
             self.detailTextLabel?.text = message?.text
 
             if let timestamp = message?.timestamp {
@@ -67,7 +55,6 @@ class UserTableViewCell: UITableViewCell {
     let timeLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "HH:MM:SS"
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = UIColor.lightGray
 
@@ -102,5 +89,28 @@ class UserTableViewCell: UITableViewCell {
 
         textLabel?.frame = CGRect(x: 64, y: textLabel!.frame.origin.y - 2, width: textLabel!.frame.size.width, height: textLabel!.frame.size.height)
         detailTextLabel?.frame = CGRect(x: 64, y: detailTextLabel!.frame.origin.y + 2, width: detailTextLabel!.frame.size.width, height: detailTextLabel!.frame.size.height)
+    }
+
+    private func setupNameAndAvatar() {
+        let chatPartnerId: String?
+
+        if message?.fromId == FIRAuth.auth()?.currentUser?.uid {
+            chatPartnerId = message?.toId
+        } else {
+            chatPartnerId = message?.fromId
+        }
+
+        if let id = chatPartnerId {
+            let reference = FIRDatabase.database().reference().child("users").child(id)
+            reference.observeSingleEvent(of: .value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String : AnyObject] {
+                    self.textLabel?.text = dictionary["name"] as? String
+
+                    if let profileImageUrl = dictionary["profileImageUrl"] as? String {
+                        self.profileImageView.loadImageUsingCacheWith(urlString: profileImageUrl)
+                    }
+                }
+            })
+        }
     }
 }

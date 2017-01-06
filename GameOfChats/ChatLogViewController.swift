@@ -92,7 +92,19 @@ extension ChatLogViewController {
 
         let timestamp: Int = Int(NSDate().timeIntervalSince1970)
         let values = ["text" : text, "toId" : toId, "fromId" : fromId, "timestamp" : timestamp] as [String : Any]
-        childReference.updateChildValues(values)
+        childReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
+            if let error = error {
+                print(error)
+                return
+            }
+
+            let userMessageReference = FIRDatabase.database().reference().child("user-message").child(fromId)
+            let messageId = childReference.key
+            userMessageReference.updateChildValues([messageId : 1])
+
+            let recepientsUserMessagesReference = FIRDatabase.database().reference().child("user-message").child(toId)
+            recepientsUserMessagesReference.updateChildValues([messageId : 1])
+        })
     }
 }
 

@@ -27,7 +27,6 @@ class MessagesViewController: UITableViewController {
         tableView.register(UserTableViewCell.self, forCellReuseIdentifier: cellId)
 
         checkIfUserIsLoggedIn()
-        observeMessages()
     }
 
     //MARK: - API methods
@@ -57,6 +56,13 @@ class MessagesViewController: UITableViewController {
 
     //MARK: - UI setup
     func setupNavigationBarWith(user: User) {
+        //TODO: move this to another func and then into view did appear
+        //refresh all messages
+        messages.removeAll()
+        messagesDictionary.removeAll()
+        tableView.reloadData()
+        observeUserMessages()
+
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
 
@@ -168,5 +174,33 @@ extension MessagesViewController {
                 }
             }
         }, withCancel: nil)
+    }
+
+    func observeUserMessages() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+
+        let reference = FIRDatabase.database().reference().child("user-message").child(uid)
+        reference.observe(.childAdded, with: { (snapshot) in
+            let messageId = snapshot.key
+            let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
+            messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String : AnyObject] {
+                    let message = Message()
+                    message.setValuesForKeys(dictionary)
+
+                    if let receiverId = message.toId {
+                        self.messagesDictionary[receiverId] = message
+                        self.messages = Array(self.messagesDictionary.values)
+                        self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
+                    }
+                    //TODO: Google why its not crashing
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+            })
+        })
     }
 }
