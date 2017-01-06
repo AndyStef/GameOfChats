@@ -14,6 +14,7 @@ class NewMessageTableViewController: UITableViewController {
     //MARK: - Variables
     let cellId = "cellId"
     var users = [User]()
+    var messagesViewController: MessagesViewController?
 
     //MARK: - View lifecycle
     override func viewDidLoad() {
@@ -33,8 +34,9 @@ class NewMessageTableViewController: UITableViewController {
                 let user = User()
                 //This works like AutoMapper every field should match, else it would crash
                 user.setValuesForKeys(dictionary)
-//                user.name = dictionary["name"] as? String
-//                user.email = dictionary["email"] as? String
+                user.id = snapshot.key
+                //user.name = dictionary["name"] as? String
+                //user.email = dictionary["email"] as? String
                 self.users.append(user)
 
                 DispatchQueue.main.async {
@@ -67,6 +69,14 @@ extension NewMessageTableViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismiss(animated: true) {
+            let user = self.users[indexPath.row]
+            //TODO: - i should defenetily do this with delegate or notification
+            self.messagesViewController?.showChatControllerFor(user: user)
+        }
     }
 }
 

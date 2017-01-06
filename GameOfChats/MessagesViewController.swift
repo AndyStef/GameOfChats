@@ -11,6 +11,10 @@ import Firebase
 
 class MessagesViewController: UITableViewController {
 
+    //MARK: - Variables
+    var messages = [Message]()
+
+    //MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -19,8 +23,10 @@ class MessagesViewController: UITableViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(handleNewMessage))
 
         checkIfUserIsLoggedIn()
+        observeMessages()
     }
 
+    //MARK: - API methods
     func checkIfUserIsLoggedIn() {
         if FIRAuth.auth()?.currentUser?.uid == nil {
             perform(#selector(handleLogoutTap), with: nil, afterDelay: 0)
@@ -29,14 +35,14 @@ class MessagesViewController: UITableViewController {
         }
     }
 
-    //TODO: - move to client API
+    //TODO: move to client API
     func fetchUser() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return
         }
 
         FIRDatabase.database().reference().child("users").child(uid).observe(.value, with: { (snapshot) in
-            //TODO: - i should defenitely do this when view view is appeared
+            //TODO: i should defenitely do this when view view is appeared
             if let dictionary = snapshot.value as? [String : AnyObject] {
                 let user = User()
                 user.setValuesForKeys(dictionary)
@@ -45,6 +51,7 @@ class MessagesViewController: UITableViewController {
         }, withCancel: nil)
     }
 
+    //MARK: - UI setup
     func setupNavigationBarWith(user: User) {
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
@@ -87,8 +94,22 @@ class MessagesViewController: UITableViewController {
         containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
 
         self.navigationItem.titleView = titleView
+    }
+}
 
-        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTitleViewTap)))
+//MARK: - TableView methods
+extension MessagesViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellId")
+        let message = messages[indexPath.row]
+        cell.textLabel?.text = message.text
+        cell.detailTextLabel?.text = message.toId
+
+        return cell
     }
 }
 
@@ -103,19 +124,38 @@ extension MessagesViewController {
         }
 
         let loginViewController = LoginViewController()
-        //MARK: - thats not really cool
+        //MARK: thats not really cool
         loginViewController.messagesController = self
         present(loginViewController, animated: true, completion: nil)
     }
 
     func handleNewMessage() {
         let newMessageController = NewMessageTableViewController()
+        //MARK: thats not really cool
+        newMessageController.messagesViewController = self
         let navigationController = UINavigationController(rootViewController: newMessageController)
         present(navigationController, animated: true, completion: nil)
     }
 
-    func handleTitleViewTap() {
+    func showChatControllerFor(user: User) {
         let chatLogContoller = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        chatLogContoller.user = user
         navigationController?.pushViewController(chatLogContoller, animated: true)
+    }
+
+    func observeMessages() {
+        let reference = FIRDatabase.database().reference().child("messages")
+        reference.observe(.childAdded, with: { (snapshot) in
+            if let dictionary = snapshot.value as? [String : AnyObject] {
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+                self.messages.append(message)
+
+                //TODO: Google why its not crashing
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        }, withCancel: nil)
     }
 }

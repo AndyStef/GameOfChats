@@ -22,12 +22,17 @@ class ChatLogViewController: UICollectionViewController {
         return textField
     }()
 
+    var user: User? {
+        didSet {
+            navigationItem.title = user?.name
+        }
+    }
+
     //MARK: - view lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         collectionView?.backgroundColor = UIColor.white
-        navigationItem.title = "Chat Log"
         setupInputArea()
     }
 
@@ -80,7 +85,13 @@ extension ChatLogViewController {
     func handleSendTap() {
         let reference = FIRDatabase.database().reference().child("messages")
         let childReference = reference.childByAutoId()
-        let values = ["text" : inputTextField.text]
+
+        guard let toId = user?.id, let fromId = FIRAuth.auth()?.currentUser?.uid, let text = inputTextField.text else {
+            return
+        }
+
+        let timestamp: Int = Int(NSDate().timeIntervalSince1970)
+        let values = ["text" : text, "toId" : toId, "fromId" : fromId, "timestamp" : timestamp] as [String : Any]
         childReference.updateChildValues(values)
     }
 }
