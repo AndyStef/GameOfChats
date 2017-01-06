@@ -13,6 +13,7 @@ class MessagesViewController: UITableViewController {
 
     //MARK: - Variables
     var messages = [Message]()
+    let cellId = "cellId"
 
     //MARK: - View lifecycle
     override func viewDidLoad() {
@@ -21,6 +22,8 @@ class MessagesViewController: UITableViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogoutTap))
         //TODO: - Add some cool icon here
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(handleNewMessage))
+
+        tableView.register(UserTableViewCell.self, forCellReuseIdentifier: cellId)
 
         checkIfUserIsLoggedIn()
         observeMessages()
@@ -104,12 +107,14 @@ extension MessagesViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellId")
-        let message = messages[indexPath.row]
-        cell.textLabel?.text = message.text
-        cell.detailTextLabel?.text = message.toId
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId") as! UserTableViewCell
+        cell.message = messages[indexPath.row]
 
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 72
     }
 }
 

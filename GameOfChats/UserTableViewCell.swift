@@ -7,8 +7,39 @@
 //
 
 import UIKit
+import Firebase
 
 class UserTableViewCell: UITableViewCell {
+
+    var message: Message? {
+        didSet {
+            if let toId = message?.toId {
+                let reference = FIRDatabase.database().reference().child("users").child(toId)
+                reference.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let dictionary = snapshot.value as? [String : AnyObject] {
+                        self.textLabel?.text = dictionary["name"] as? String
+
+                        if let profileImageUrl = dictionary["profileImageUrl"] as? String {
+                            self.profileImageView.loadImageUsingCacheWith(urlString: profileImageUrl)
+                        }
+                    }
+                })
+            }
+            
+            self.detailTextLabel?.text = message?.text
+        }
+    }
+
+    var user: User? {
+        didSet {
+            self.textLabel?.text = user?.name
+            self.detailTextLabel?.text = user?.email
+
+            if let profileImageUrl = user?.profileImageUrl {
+                self.profileImageView.loadImageUsingCacheWith(urlString: profileImageUrl)
+            }
+        }
+    }
 
     let profileImageView: UIImageView = {
         let image = UIImageView()
