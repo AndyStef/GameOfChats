@@ -15,6 +15,7 @@ class MessagesViewController: UITableViewController {
     var messages = [Message]()
     var messagesDictionary = [String : Message]()
     let cellId = "cellId"
+    var timer: Timer?
 
     //MARK: - View lifecycle
     override func viewDidLoad() {
@@ -176,27 +177,6 @@ extension MessagesViewController {
         navigationController?.pushViewController(chatLogContoller, animated: true)
     }
 
-    func observeMessages() {
-        let reference = FIRDatabase.database().reference().child("messages")
-        reference.observe(.childAdded, with: { (snapshot) in
-            if let dictionary = snapshot.value as? [String : AnyObject] {
-                let message = Message()
-                message.setValuesForKeys(dictionary)
-
-                if let receiverId = message.toId {
-                    self.messagesDictionary[receiverId] = message
-                    self.messages = Array(self.messagesDictionary.values)
-                    self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
-                }
-
-                //TODO: Google why its not crashing
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-        }, withCancel: nil)
-    }
-
     func observeUserMessages() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return
@@ -216,12 +196,19 @@ extension MessagesViewController {
                         self.messages = Array(self.messagesDictionary.values)
                         self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
                     }
-                    //TODO: Google why its not crashing
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
+
+                    //MARK: - Thats a trick to fight multiple reloads of table
+                    self.timer?.invalidate()
+                    self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
                 }
             })
         })
+    }
+
+    func handleReloadTable() {
+        //TODO: Google why its not crashing
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 }
