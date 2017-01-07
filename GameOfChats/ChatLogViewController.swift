@@ -104,10 +104,32 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
         let message = messages[indexPath.item]
         //TODO: - what is difference between indexPath.item and row
         cell.textView.text = message.text
+        setupCell(cell, message: message)
+
         let estimatedWidth = estimateFrameForText(text: message.text ?? "").width + 32
         cell.bubbleWidthAnchor?.constant = estimatedWidth
 
         return cell
+    }
+
+    private func setupCell(_ cell: ChatMessageCollectionViewCell, message: Message) {
+        if let profileImageUrl = self.user?.profileImageUrl {
+            cell.profileImageView.loadImageUsingCacheWith(urlString: profileImageUrl)
+        }
+
+        if message.toId == FIRAuth.auth()?.currentUser?.uid {
+            //messages addressed to me
+            cell.bubbleView.backgroundColor = UIColor.red
+            cell.bubbleViewLeftAnchor?.isActive = true
+            cell.bubbleViewRightAnchor?.isActive = false
+            cell.profileImageView.isHidden = false
+        } else {
+            //messages that i sent
+            cell.bubbleView.backgroundColor = UIColor(r: 0, g: 137, b: 249)
+            cell.bubbleViewRightAnchor?.isActive = true
+            cell.bubbleViewLeftAnchor?.isActive = false
+            cell.profileImageView.isHidden = true
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
