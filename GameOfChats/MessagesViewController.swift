@@ -22,7 +22,8 @@ class MessagesViewController: UITableViewController {
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogoutTap))
         //TODO: - Add some cool icon here
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(handleNewMessage))
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(handleNewMessage))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "new3"), style: .plain, target: self, action: #selector(handleNewMessage))
 
         tableView.register(UserTableViewCell.self, forCellReuseIdentifier: cellId)
 
@@ -122,6 +123,26 @@ extension MessagesViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let message = messages[indexPath.row]
+
+        guard let chatPartnerId = message.chatPartnerId() else {
+            return
+        }
+
+        let reference = FIRDatabase.database().reference().child("users").child(chatPartnerId)
+        reference.observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String : AnyObject] else {
+                return
+            }
+
+            let user = User()
+            user.id = chatPartnerId
+            user.setValuesForKeys(dictionary)
+            self.showChatControllerFor(user: user)
+        })
     }
 }
 

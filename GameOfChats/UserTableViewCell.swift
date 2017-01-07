@@ -92,15 +92,7 @@ class UserTableViewCell: UITableViewCell {
     }
 
     private func setupNameAndAvatar() {
-        let chatPartnerId: String?
-
-        if message?.fromId == FIRAuth.auth()?.currentUser?.uid {
-            chatPartnerId = message?.toId
-        } else {
-            chatPartnerId = message?.fromId
-        }
-
-        if let id = chatPartnerId {
+        if let id = message?.chatPartnerId() {
             let reference = FIRDatabase.database().reference().child("users").child(id)
             reference.observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String : AnyObject] {

@@ -25,14 +25,20 @@ class ChatLogViewController: UICollectionViewController {
     var user: User? {
         didSet {
             navigationItem.title = user?.name
+            observeMessages()
         }
     }
+
+    let cellId = "cellId"
+    var messages = [Message]()
 
     //MARK: - view lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
+        collectionView?.register(ChatMessageCollectionViewCell.self, forCellWithReuseIdentifier: cellId)
         setupInputArea()
     }
 
@@ -40,6 +46,7 @@ class ChatLogViewController: UICollectionViewController {
     func setupInputArea() {
         //entire container
         let containerView = UIView()
+        containerView.backgroundColor = UIColor.white
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(containerView)
@@ -80,6 +87,25 @@ class ChatLogViewController: UICollectionViewController {
     }
 }
 
+//MARK: - CollectionVIew methods 
+extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return messages.count
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ChatMessageCollectionViewCell
+        //TODO: - what is difference between indexPath.item and row
+        cell.textView.text = messages[indexPath.item].text
+
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: 80)
+    }
+}
+
 //MARK: - Events and handlers
 extension ChatLogViewController {
     func handleSendTap() {
@@ -104,6 +130,33 @@ extension ChatLogViewController {
 
             let recepientsUserMessagesReference = FIRDatabase.database().reference().child("user-message").child(toId)
             recepientsUserMessagesReference.updateChildValues([messageId : 1])
+        })
+    }
+
+    func observeMessages() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+
+        let userMessageReference = FIRDatabase.database().reference().child("user-message").child(uid)
+        userMessageReference.observe(.childAdded, with: { (snapshot) in
+            let messageId = snapshot.key
+            let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
+            messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dictionary = snapshot.value as? [String : AnyObject] else {
+                    return
+                }
+
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+
+                if message.chatPartnerId() == self.user?.id {
+                    self.messages.append(message)
+                    DispatchQueue.main.async {
+                        self.collectionView?.reloadData()
+                    }
+                }
+            })
         })
     }
 }
