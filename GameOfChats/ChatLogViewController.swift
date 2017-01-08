@@ -177,21 +177,21 @@ extension ChatLogViewController {
 
             self.inputTextField.text = nil
 
-            let userMessageReference = FIRDatabase.database().reference().child("user-message").child(fromId)
+            let userMessageReference = FIRDatabase.database().reference().child("user-message").child(fromId).child(toId)
             let messageId = childReference.key
             userMessageReference.updateChildValues([messageId : 1])
 
-            let recepientsUserMessagesReference = FIRDatabase.database().reference().child("user-message").child(toId)
+            let recepientsUserMessagesReference = FIRDatabase.database().reference().child("user-message").child(toId).child(fromId)
             recepientsUserMessagesReference.updateChildValues([messageId : 1])
         })
     }
 
     func observeMessages() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid, let chatPartnerId = user?.id else {
             return
         }
 
-        let userMessageReference = FIRDatabase.database().reference().child("user-message").child(uid)
+        let userMessageReference = FIRDatabase.database().reference().child("user-message").child(uid).child(chatPartnerId)
         userMessageReference.observe(.childAdded, with: { (snapshot) in
             let messageId = snapshot.key
             let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
@@ -202,12 +202,10 @@ extension ChatLogViewController {
 
                 let message = Message()
                 message.setValuesForKeys(dictionary)
+                self.messages.append(message)
 
-                if message.chatPartnerId() == self.user?.id {
-                    self.messages.append(message)
-                    DispatchQueue.main.async {
-                        self.collectionView?.reloadData()
-                    }
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
                 }
             })
         })

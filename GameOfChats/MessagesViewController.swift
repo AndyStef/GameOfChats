@@ -22,8 +22,6 @@ class MessagesViewController: UITableViewController {
         super.viewDidLoad()
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogoutTap))
-        //TODO: - Add some cool icon here
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(handleNewMessage))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "new3"), style: .plain, target: self, action: #selector(handleNewMessage))
 
         tableView.register(UserTableViewCell.self, forCellReuseIdentifier: cellId)
@@ -184,23 +182,29 @@ extension MessagesViewController {
 
         let reference = FIRDatabase.database().reference().child("user-message").child(uid)
         reference.observe(.childAdded, with: { (snapshot) in
-            let messageId = snapshot.key
-            let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
-            messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String : AnyObject] {
-                    let message = Message()
-                    message.setValuesForKeys(dictionary)
 
-                    if let chatPartnerId = message.chatPartnerId() {
-                        self.messagesDictionary[chatPartnerId] = message
-                        self.messages = Array(self.messagesDictionary.values)
-                        self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
+            let userId = snapshot.key
+            FIRDatabase.database().reference().child("user-message").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
+
+                let messageId = snapshot.key
+                let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
+                messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+
+                    if let dictionary = snapshot.value as? [String : AnyObject] {
+                        let message = Message()
+                        message.setValuesForKeys(dictionary)
+
+                        if let chatPartnerId = message.chatPartnerId() {
+                            self.messagesDictionary[chatPartnerId] = message
+                            self.messages = Array(self.messagesDictionary.values)
+                            self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
+                        }
+
+                        //MARK: - Thats a trick to fight multiple reloads of table
+                        self.timer?.invalidate()
+                        self.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
                     }
-
-                    //MARK: - Thats a trick to fight multiple reloads of table
-                    self.timer?.invalidate()
-                    self.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
-                }
+                })
             })
         })
     }
