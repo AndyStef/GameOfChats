@@ -187,29 +187,39 @@ extension MessagesViewController {
             FIRDatabase.database().reference().child("user-message").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
 
                 let messageId = snapshot.key
-                let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
-                messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
-
-                    if let dictionary = snapshot.value as? [String : AnyObject] {
-                        let message = Message()
-                        message.setValuesForKeys(dictionary)
-
-                        if let chatPartnerId = message.chatPartnerId() {
-                            self.messagesDictionary[chatPartnerId] = message
-                            self.messages = Array(self.messagesDictionary.values)
-                            self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
-                        }
-
-                        //MARK: - Thats a trick to fight multiple reloads of table
-                        self.timer?.invalidate()
-                        self.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
-                    }
-                })
+                self.fetchMessageWith(messageId: messageId)
             })
         })
     }
 
+    //TODO: move this out to client API
+    private func fetchMessageWith(messageId: String) {
+        let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
+        messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+
+            if let dictionary = snapshot.value as? [String : AnyObject] {
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+
+                if let chatPartnerId = message.chatPartnerId() {
+                    self.messagesDictionary[chatPartnerId] = message
+                }
+
+                self.attempReloadOfData()
+            }
+        })
+    }
+
+    private func attempReloadOfData() {
+        //MARK: - Thats a trick to fight multiple reloads of table
+        self.timer?.invalidate()
+        self.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+    }
+
     func handleReloadTable() {
+        self.messages = Array(self.messagesDictionary.values)
+        self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
+
         //TODO: Google why its not crashing
         DispatchQueue.main.async {
             self.tableView.reloadData()
