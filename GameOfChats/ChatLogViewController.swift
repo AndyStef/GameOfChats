@@ -31,6 +31,7 @@ class ChatLogViewController: UICollectionViewController {
 
     let cellId = "cellId"
     var messages = [Message]()
+    var containerViewBottomAnchor: NSLayoutConstraint?
 
     //MARK: - view lifecycle
     override func viewDidLoad() {
@@ -42,10 +43,23 @@ class ChatLogViewController: UICollectionViewController {
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(ChatMessageCollectionViewCell.self, forCellWithReuseIdentifier: cellId)
         setupInputArea()
+        setupKeyboardObservers()
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize, with coordinator:
+        UIViewControllerTransitionCoordinator) {
         collectionView?.collectionViewLayout.invalidateLayout()
+    }
+
+    func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: .UIKeyboardWillHide, object: nil)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        NotificationCenter.default.removeObserver(self)
     }
 
     //MARK: - UI Setup methods
@@ -57,7 +71,8 @@ class ChatLogViewController: UICollectionViewController {
 
         view.addSubview(containerView)
         containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        containerViewBottomAnchor = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+        containerViewBottomAnchor?.isActive = true
         containerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
 
@@ -139,7 +154,9 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
             height = estimateFrameForText(text: text).height + 20
         }
 
-        return CGSize(width: view.frame.width, height: height)
+        //MARK: Another hack to fix constraints issues
+        let width = UIScreen.main.bounds.width
+        return CGSize(width: width, height: height)
     }
 
     private func estimateFrameForText(text: String) -> CGRect {
@@ -203,6 +220,25 @@ extension ChatLogViewController {
                 }
             })
         })
+    }
+
+    func handleKeyboardWillShow(notification: NSNotification) {
+        let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+        let animationDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
+
+        self.containerViewBottomAnchor?.constant = -keyboardFrame!.height
+        UIView.animate(withDuration: animationDuration!) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    func handleKeyboardWillHide(notification: NSNotification) {
+        let animationDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
+
+        self.containerViewBottomAnchor?.constant = 0
+        UIView.animate(withDuration: animationDuration!) {
+            self.view.layoutIfNeeded()
+        }
     }
 }
 
