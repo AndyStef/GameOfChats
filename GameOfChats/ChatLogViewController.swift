@@ -26,7 +26,20 @@ class ChatLogViewController: UICollectionViewController {
         let containerView = UIView()
         containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
         containerView.backgroundColor = UIColor.white
-    
+
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = #imageLiteral(resourceName: "PickImage")
+        imageView.contentMode = .scaleAspectFill
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handlePickImageTap)))
+        imageView.isUserInteractionEnabled = true
+
+        containerView.addSubview(imageView)
+        imageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        imageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
         //send button
         let sendButton = UIButton(type: .system)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
@@ -41,7 +54,7 @@ class ChatLogViewController: UICollectionViewController {
     
         //text field
         containerView.addSubview(self.inputTextField)
-        self.inputTextField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
+        self.inputTextField.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 8).isActive = true
         self.inputTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor, constant: 8).isActive = true
         self.inputTextField.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         self.inputTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
@@ -112,8 +125,10 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
         cell.textView.text = message.text
         setupCell(cell, message: message)
 
-        let estimatedWidth = estimateFrameForText(text: message.text ?? "").width + 32
-        cell.bubbleWidthAnchor?.constant = estimatedWidth
+        if let text = message.text {
+            let estimatedWidth = estimateFrameForText(text: text).width + 32
+            cell.bubbleWidthAnchor?.constant = estimatedWidth
+        }
 
         return cell
     }
@@ -136,6 +151,14 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
             cell.bubbleViewLeftAnchor?.isActive = false
             cell.profileImageView.isHidden = true
         }
+
+        if let messageImageUrl = message.imageUrl {
+            cell.messageImageView.isHidden = false
+            cell.messageImageView.loadImageUsingCacheWith(urlString: messageImageUrl)
+            cell.bubbleView.backgroundColor = UIColor.clear
+        } else {
+            cell.messageImageView.isHidden = true
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -154,6 +177,79 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
         let size = CGSize(width: 200, height: 1000)
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 16)], context: nil)
+    }
+}
+
+//MARK: - API methods 
+extension ChatLogViewController {
+    func observeMessages() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid, let chatPartnerId = user?.id else {
+            return
+        }
+
+        let userMessageReference = FIRDatabase.database().reference().child("user-message").child(uid).child(chatPartnerId)
+        userMessageReference.observe(.childAdded, with: { (snapshot) in
+            let messageId = snapshot.key
+            let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
+            messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dictionary = snapshot.value as? [String : AnyObject] else {
+                    return
+                }
+
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+                self.messages.append(message)
+
+                DispatchQueue.main.async {
+                    self.collectionView?.reloadData()
+                }
+            })
+        })
+    }
+
+    func uploadImageToFirebaseStorage(_ image: UIImage) {
+        let imageName = NSUUID().uuidString
+        let reference = FIRStorage.storage().reference().child("message_images").child("\(imageName).jpg")
+
+        if let uploadData = UIImageJPEGRepresentation(image, 0.2) {
+            reference.put(uploadData, metadata: nil, completion: { (metadata, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }
+
+                if let imageUrl = metadata?.downloadURL()?.absoluteString {
+                    self.sendMessageWith(imageUrl: imageUrl)
+                }
+            })
+        }
+    }
+
+    private func sendMessageWith(imageUrl: String) {
+        let reference = FIRDatabase.database().reference().child("messages")
+        let childReference = reference.childByAutoId()
+
+        guard let toId = user?.id, let fromId = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+
+        let timestamp: Int = Int(NSDate().timeIntervalSince1970)
+        let values = ["imageUrl" : imageUrl, "toId" : toId, "fromId" : fromId, "timestamp" : timestamp] as [String : Any]
+        childReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
+            if let error = error {
+                print(error)
+                return
+            }
+
+            self.inputTextField.text = nil
+
+            let userMessageReference = FIRDatabase.database().reference().child("user-message").child(fromId).child(toId)
+            let messageId = childReference.key
+            userMessageReference.updateChildValues([messageId : 1])
+
+            let recepientsUserMessagesReference = FIRDatabase.database().reference().child("user-message").child(toId).child(fromId)
+            recepientsUserMessagesReference.updateChildValues([messageId : 1])
+        })
     }
 }
 
@@ -186,29 +282,35 @@ extension ChatLogViewController {
         })
     }
 
-    func observeMessages() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid, let chatPartnerId = user?.id else {
-            return
+    func handlePickImageTap() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        present(imagePicker, animated: true, completion: nil)
+    }
+}
+
+//TODO: - Maybe move this out to code snippet
+//MARK: - imagePicker delegate 
+extension ChatLogViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        var selectedImageFromPicker: UIImage?
+
+        if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
+            selectedImageFromPicker = editedImage
+        } else if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            selectedImageFromPicker = originalImage
         }
 
-        let userMessageReference = FIRDatabase.database().reference().child("user-message").child(uid).child(chatPartnerId)
-        userMessageReference.observe(.childAdded, with: { (snapshot) in
-            let messageId = snapshot.key
-            let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
-            messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
-                guard let dictionary = snapshot.value as? [String : AnyObject] else {
-                    return
-                }
+        if let selectedImage = selectedImageFromPicker {
+            uploadImageToFirebaseStorage(selectedImage)
+        }
 
-                let message = Message()
-                message.setValuesForKeys(dictionary)
-                self.messages.append(message)
-
-                DispatchQueue.main.async {
-                    self.collectionView?.reloadData()
-                }
-            })
-        })
+        dismiss(animated: true, completion: nil)
     }
 }
 

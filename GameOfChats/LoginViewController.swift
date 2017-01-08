@@ -321,7 +321,6 @@ extension LoginViewController {
 //MARK: - ImagePicker delegate
 extension LoginViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        print("cancelled picking image")
         dismiss(animated: true, completion: nil)
     }
 
