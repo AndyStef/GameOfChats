@@ -11,16 +11,25 @@ import Firebase
 
 class MessagesViewController: UITableViewController {
 
+    //MARK: - Variables
+    var messages = [Message]()
+    var messagesDictionary = [String : Message]()
+    let cellId = "cellId"
+    var timer: Timer?
+
+    //MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogoutTap))
-        //TODO: - Add some cool icon here
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(handleNewMessage))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "new3"), style: .plain, target: self, action: #selector(handleNewMessage))
+
+        tableView.register(UserTableViewCell.self, forCellReuseIdentifier: cellId)
 
         checkIfUserIsLoggedIn()
     }
 
+    //MARK: - API methods
     func checkIfUserIsLoggedIn() {
         if FIRAuth.auth()?.currentUser?.uid == nil {
             perform(#selector(handleLogoutTap), with: nil, afterDelay: 0)
@@ -29,14 +38,14 @@ class MessagesViewController: UITableViewController {
         }
     }
 
-    //TODO: - move to client API
+    //TODO: move to client API
     func fetchUser() {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return
         }
 
         FIRDatabase.database().reference().child("users").child(uid).observe(.value, with: { (snapshot) in
-            //TODO: - i should defenitely do this when view view is appeared
+            //TODO: i should defenitely do this when view view is appeared
             if let dictionary = snapshot.value as? [String : AnyObject] {
                 let user = User()
                 user.setValuesForKeys(dictionary)
@@ -45,8 +54,15 @@ class MessagesViewController: UITableViewController {
         }, withCancel: nil)
     }
 
+    //MARK: - UI setup
     func setupNavigationBarWith(user: User) {
-        self.navigationItem.title = user.name
+        //TODO: move this to another func and then into view did appear
+        //refresh all messages
+        messages.removeAll()
+        messagesDictionary.removeAll()
+        tableView.reloadData()
+        observeUserMessages()
+
         let titleView = UIView()
         titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
 
@@ -91,6 +107,44 @@ class MessagesViewController: UITableViewController {
     }
 }
 
+//MARK: - TableView methods
+extension MessagesViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId") as! UserTableViewCell
+        cell.message = messages[indexPath.row]
+
+        return cell
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 72
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let message = messages[indexPath.row]
+
+        guard let chatPartnerId = message.chatPartnerId() else {
+            return
+        }
+
+        let reference = FIRDatabase.database().reference().child("users").child(chatPartnerId)
+        reference.observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String : AnyObject] else {
+                return
+            }
+
+            let user = User()
+            user.id = chatPartnerId
+            user.setValuesForKeys(dictionary)
+            self.showChatControllerFor(user: user)
+        })
+    }
+}
+
 //MARK: - Events and handlers
 extension MessagesViewController {
 
@@ -102,14 +156,73 @@ extension MessagesViewController {
         }
 
         let loginViewController = LoginViewController()
-        //MARK: - thats not really cool
+        //MARK: thats not really cool
         loginViewController.messagesController = self
         present(loginViewController, animated: true, completion: nil)
     }
 
     func handleNewMessage() {
         let newMessageController = NewMessageTableViewController()
+        //MARK: thats not really cool
+        newMessageController.messagesViewController = self
         let navigationController = UINavigationController(rootViewController: newMessageController)
         present(navigationController, animated: true, completion: nil)
+    }
+
+    func showChatControllerFor(user: User) {
+        let chatLogContoller = ChatLogViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        chatLogContoller.user = user
+        navigationController?.pushViewController(chatLogContoller, animated: true)
+    }
+
+    func observeUserMessages() {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+
+        let reference = FIRDatabase.database().reference().child("user-message").child(uid)
+        reference.observe(.childAdded, with: { (snapshot) in
+
+            let userId = snapshot.key
+            FIRDatabase.database().reference().child("user-message").child(uid).child(userId).observe(.childAdded, with: { (snapshot) in
+
+                let messageId = snapshot.key
+                self.fetchMessageWith(messageId: messageId)
+            })
+        })
+    }
+
+    //TODO: move this out to client API
+    private func fetchMessageWith(messageId: String) {
+        let messageReference = FIRDatabase.database().reference().child("messages").child(messageId)
+        messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+
+            if let dictionary = snapshot.value as? [String : AnyObject] {
+                let message = Message()
+                message.setValuesForKeys(dictionary)
+
+                if let chatPartnerId = message.chatPartnerId() {
+                    self.messagesDictionary[chatPartnerId] = message
+                }
+
+                self.attempReloadOfData()
+            }
+        })
+    }
+
+    private func attempReloadOfData() {
+        //MARK: - Thats a trick to fight multiple reloads of table
+        self.timer?.invalidate()
+        self.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+    }
+
+    func handleReloadTable() {
+        self.messages = Array(self.messagesDictionary.values)
+        self.messages = self.messages.sorted(by: { $0.0.timestamp?.intValue ?? 0 > $0.1.timestamp?.intValue ?? 0 })
+
+        //TODO: Google why its not crashing
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 }

@@ -271,7 +271,7 @@ extension LoginViewController {
 
     private func registerUserIntoDatabase(uid: String, values: [String : AnyObject]) {
         //TODO: - Refactor this out to client API class (maybe)
-        let reference = FIRDatabase.database().reference(fromURL: "https://got-chat.firebaseio.com/")
+        let reference = FIRDatabase.database().reference()
         let usersReference = reference.child("users").child(uid)
 
         usersReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
