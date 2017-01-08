@@ -310,7 +310,6 @@ extension ChatLogViewController: UIImagePickerControllerDelegate, UINavigationCo
             uploadImageToFirebaseStorage(selectedImage)
         }
 
-        //just for testing purpose
         dismiss(animated: true, completion: nil)
     }
 }
