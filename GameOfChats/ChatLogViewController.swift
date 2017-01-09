@@ -104,11 +104,22 @@ class ChatLogViewController: UICollectionViewController {
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(ChatMessageCollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        setupKeyboardObservers()
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator:
         UIViewControllerTransitionCoordinator) {
         collectionView?.collectionViewLayout.invalidateLayout()
+    }
+
+    func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardDidShow), name: .UIKeyboardDidShow, object: nil)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -128,6 +139,8 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
         if let text = message.text {
             let estimatedWidth = estimateFrameForText(text: text).width + 32
             cell.bubbleWidthAnchor?.constant = estimatedWidth
+        } else if message.imageUrl != nil {
+            cell.bubbleWidthAnchor?.constant = 200
         }
 
         return cell
@@ -163,9 +176,12 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var height: CGFloat = 80.0
+        let message = messages[indexPath.item]
 
-        if let text = messages[indexPath.item].text {
+        if let text = message.text {
             height = estimateFrameForText(text: text).height + 20
+        } else if let imageHeight = message.imageHeight?.floatValue, let imageWidth = message.imageWidth?.floatValue {
+            height = CGFloat(imageHeight / imageWidth * 200)
         }
 
         //MARK: Another hack to fix constraints issues
@@ -196,12 +212,13 @@ extension ChatLogViewController {
                     return
                 }
 
-                let message = Message()
-                message.setValuesForKeys(dictionary)
+                let message = Message(dictionary: dictionary)
                 self.messages.append(message)
 
                 DispatchQueue.main.async {
                     self.collectionView?.reloadData()
+                    let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+                    self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
                 }
             })
         })
@@ -219,13 +236,18 @@ extension ChatLogViewController {
                 }
 
                 if let imageUrl = metadata?.downloadURL()?.absoluteString {
-                    self.sendMessageWith(imageUrl: imageUrl)
+                    self.sendMessageWith(imageUrl: imageUrl, image: image)
                 }
             })
         }
     }
 
-    private func sendMessageWith(imageUrl: String) {
+    private func sendMessageWith(imageUrl: String, image: UIImage) {
+        let properties = ["imageUrl" : imageUrl, "imageWidth" :  image.size.width, "imageHeight" : image.size.height] as [String : Any]
+        sendMessageWith(properties: properties)
+    }
+
+    func sendMessageWith(properties: [String : Any]) {
         let reference = FIRDatabase.database().reference().child("messages")
         let childReference = reference.childByAutoId()
 
@@ -234,7 +256,9 @@ extension ChatLogViewController {
         }
 
         let timestamp: Int = Int(NSDate().timeIntervalSince1970)
-        let values = ["imageUrl" : imageUrl, "toId" : toId, "fromId" : fromId, "timestamp" : timestamp] as [String : Any]
+        var values = ["toId" : toId, "fromId" : fromId, "timestamp" : timestamp] as [String : Any]
+        properties.forEach({values[$0] = $1})
+
         childReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
             if let error = error {
                 print(error)
@@ -256,30 +280,12 @@ extension ChatLogViewController {
 //MARK: - Events and handlers
 extension ChatLogViewController {
     func handleSendTap() {
-        let reference = FIRDatabase.database().reference().child("messages")
-        let childReference = reference.childByAutoId()
-
-        guard let toId = user?.id, let fromId = FIRAuth.auth()?.currentUser?.uid, let text = inputTextField.text else {
+        guard let text = inputTextField.text else {
             return
         }
 
-        let timestamp: Int = Int(NSDate().timeIntervalSince1970)
-        let values = ["text" : text, "toId" : toId, "fromId" : fromId, "timestamp" : timestamp] as [String : Any]
-        childReference.updateChildValues(values, withCompletionBlock: { (error, reference) in
-            if let error = error {
-                print(error)
-                return
-            }
-
-            self.inputTextField.text = nil
-
-            let userMessageReference = FIRDatabase.database().reference().child("user-message").child(fromId).child(toId)
-            let messageId = childReference.key
-            userMessageReference.updateChildValues([messageId : 1])
-
-            let recepientsUserMessagesReference = FIRDatabase.database().reference().child("user-message").child(toId).child(fromId)
-            recepientsUserMessagesReference.updateChildValues([messageId : 1])
-        })
+        let properties = ["text" : text]
+        sendMessageWith(properties: properties)
     }
 
     func handlePickImageTap() {
@@ -287,6 +293,13 @@ extension ChatLogViewController {
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
         present(imagePicker, animated: true, completion: nil)
+    }
+
+    func handleKeyboardDidShow() {
+        if messages.count > 0 {
+            let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
+            self.collectionView?.scrollToItem(at: indexPath, at: .Top, animated: true)
+        }
     }
 }
 
