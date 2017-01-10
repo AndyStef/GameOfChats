@@ -17,7 +17,7 @@ class ChatMessageCollectionViewCell: UICollectionViewCell {
         textView.font = UIFont.systemFont(ofSize: 16)
         textView.backgroundColor = UIColor.clear
         textView.textColor = UIColor.white
-        textView.isEditable = false 
+        textView.isEditable = false
 
         return textView
     }()
@@ -42,12 +42,14 @@ class ChatMessageCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
 
-    let messageImageView: UIImageView = {
+    lazy var messageImageView: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.layer.cornerRadius = 16
         image.layer.masksToBounds = true
         image.contentMode = .scaleAspectFill
+        image.isUserInteractionEnabled = true
+        image.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleImageTap)))
 
         return image
     }()
@@ -55,6 +57,7 @@ class ChatMessageCollectionViewCell: UICollectionViewCell {
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleViewRightAnchor: NSLayoutConstraint?
     var bubbleViewLeftAnchor: NSLayoutConstraint?
+    var chatLogController: ChatLogViewController?
 
     //MARK: - Cell  initialization
     override init(frame: CGRect) {
@@ -91,5 +94,14 @@ class ChatMessageCollectionViewCell: UICollectionViewCell {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func handleImageTap(tapGesture: UITapGestureRecognizer) {
+        guard let imageView = tapGesture.view as? UIImageView else {
+            return
+        }
+        
+        //TODO: is that better to do this way or using closures
+        chatLogController?.handleZoomFor(image: imageView)
     }
 }

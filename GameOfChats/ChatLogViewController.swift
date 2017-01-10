@@ -94,6 +94,9 @@ class ChatLogViewController: UICollectionViewController {
 
     let cellId = "cellId"
     var messages = [Message]()
+    var startingFrame: CGRect?
+    var blackBackgroundView: UIView?
+    var startingImageView: UIImageView?
 
     //MARK: - view lifecycle
     override func viewDidLoad() {
@@ -131,6 +134,7 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ChatMessageCollectionViewCell
+        cell.chatLogController = self
         let message = messages[indexPath.item]
         //TODO: - what is difference between indexPath.item and row
         cell.textView.text = message.text
@@ -139,8 +143,10 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
         if let text = message.text {
             let estimatedWidth = estimateFrameForText(text: text).width + 32
             cell.bubbleWidthAnchor?.constant = estimatedWidth
+            cell.textView.isHidden = false
         } else if message.imageUrl != nil {
             cell.bubbleWidthAnchor?.constant = 200
+            cell.textView.isHidden = true
         }
 
         return cell
@@ -298,7 +304,58 @@ extension ChatLogViewController {
     func handleKeyboardDidShow() {
         if messages.count > 0 {
             let indexPath = IndexPath(item: self.messages.count - 1, section: 0)
-            self.collectionView?.scrollToItem(at: indexPath, at: .Top, animated: true)
+            self.collectionView?.scrollToItem(at: indexPath, at: .top, animated: true)
+        }
+    }
+
+    func handleZoomFor(image: UIImageView) {
+        self.startingImageView = image
+        self.startingImageView?.isHidden = true
+        startingFrame = image.superview?.convert(image.frame, to: nil)
+        let zoomingImageView = UIImageView(frame: startingFrame!)
+        zoomingImageView.backgroundColor = UIColor.red
+        zoomingImageView.image = image.image
+        zoomingImageView.contentMode = .scaleAspectFill
+        zoomingImageView.isUserInteractionEnabled = true
+        zoomingImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.handleZoomOut)))
+
+        if let keyWindow = UIApplication.shared.keyWindow {
+            self.blackBackgroundView = UIView(frame: keyWindow.frame)
+            self.blackBackgroundView?.backgroundColor = UIColor.black
+            self.blackBackgroundView?.alpha = 0
+            keyWindow.addSubview(self.blackBackgroundView ?? UIView())
+
+            keyWindow.addSubview(zoomingImageView)
+            //Brians variant
+           // let neededHeight = zoomingImageView.frame.height / keyWindow.frame.width * keyWindow.frame.height
+            //My var
+            let neededHeight = zoomingImageView.frame.height * keyWindow.frame.width / keyWindow.frame.height
+
+            UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut], animations: {
+                self.blackBackgroundView?.alpha = 1.0
+                self.inputContainerView.alpha = 0
+                zoomingImageView.frame = CGRect(x: 0, y: 0, width: keyWindow.frame.width, height: neededHeight)
+                zoomingImageView.center = keyWindow.center
+            }, completion: nil)
+        }
+    }
+
+    func handleZoomOut(tapGesture: UITapGestureRecognizer) {
+        guard let zoomImageView = tapGesture.view as? UIImageView else {
+            return
+        }
+
+        //TODO: what is real difference between view.clipsToBounds and view.layer.masksToBounds
+        zoomImageView.clipsToBounds = true
+        UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut], animations: {
+            zoomImageView.frame = self.startingFrame!
+            zoomImageView.layer.cornerRadius = 16
+            self.blackBackgroundView?.alpha = 0.0
+            self.inputContainerView.alpha = 1.0
+        }) { (completed) in
+            self.blackBackgroundView?.removeFromSuperview()
+            zoomImageView.removeFromSuperview()
+            self.startingImageView?.isHidden = false
         }
     }
 }
