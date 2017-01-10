@@ -261,7 +261,9 @@ extension ChatLogViewController {
             return
         }
 
-        let timestamp: Int = Int(NSDate().timeIntervalSince1970)
+        //fix of this issue in Swift 3
+        let timestamp = NSNumber(value: NSDate().timeIntervalSince1970)
+        //let timestamp: Int = Int(NSDate().timeIntervalSince1970)
         var values = ["toId" : toId, "fromId" : fromId, "timestamp" : timestamp] as [String : Any]
         properties.forEach({values[$0] = $1})
 
