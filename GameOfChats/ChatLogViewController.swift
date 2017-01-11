@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import AVFoundation
+import MobileCoreServices
 
 //TODO: Handle keyboard and move view up and down
 class ChatLogViewController: UICollectionViewController {
@@ -230,7 +232,7 @@ extension ChatLogViewController {
         })
     }
 
-    func uploadImageToFirebaseStorage(_ image: UIImage) {
+    func uploadImageToFirebaseStorage(_ image: UIImage, completion: @escaping (_ imageUrl: String) -> ()) {
         let imageName = NSUUID().uuidString
         let reference = FIRStorage.storage().reference().child("message_images").child("\(imageName).jpg")
 
@@ -242,14 +244,19 @@ extension ChatLogViewController {
                 }
 
                 if let imageUrl = metadata?.downloadURL()?.absoluteString {
-                    self.sendMessageWith(imageUrl: imageUrl, image: image)
+                    completion(imageUrl)
                 }
             })
         }
     }
 
-    private func sendMessageWith(imageUrl: String, image: UIImage) {
+    func sendMessageWith(imageUrl: String, image: UIImage) {
         let properties = ["imageUrl" : imageUrl, "imageWidth" :  image.size.width, "imageHeight" : image.size.height] as [String : Any]
+        sendMessageWith(properties: properties)
+    }
+
+    func sendMessageWith(videoUrl: String, image: UIImage, imageUrl: String) {
+        let properties = ["videoUrl" : videoUrl, "imageUrl" : imageUrl, "imageWidth" :  image.size.width, "imageHeight" : image.size.height] as [String : Any]
         sendMessageWith(properties: properties)
     }
 
@@ -300,6 +307,7 @@ extension ChatLogViewController {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
+        imagePicker.mediaTypes = [kUTTypeImage as String, kUTTypeMovie as String]
         present(imagePicker, animated: true, completion: nil)
     }
 
@@ -348,7 +356,8 @@ extension ChatLogViewController {
         }
 
         //TODO: what is real difference between view.clipsToBounds and view.layer.masksToBounds
-        zoomImageView.clipsToBounds = true
+        //MARK: this actually cause a bug
+        //zoomImageView.clipsToBounds = true
         UIView.animate(withDuration: 0.5, delay: 0, options: [.curveEaseOut], animations: {
             zoomImageView.frame = self.startingFrame!
             zoomImageView.layer.cornerRadius = 16
@@ -370,6 +379,17 @@ extension ChatLogViewController: UIImagePickerControllerDelegate, UINavigationCo
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+
+        if let videoUrl = info[UIImagePickerControllerMediaURL] as? URL {
+            handleVideoSelectedFor(url: videoUrl)
+        } else {
+            handleImageSelectedFor(info: info)
+        }
+
+        dismiss(animated: true, completion: nil)
+    }
+
+    private func handleImageSelectedFor(info: [String : Any]) {
         var selectedImageFromPicker: UIImage?
 
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
@@ -379,10 +399,53 @@ extension ChatLogViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
 
         if let selectedImage = selectedImageFromPicker {
-            uploadImageToFirebaseStorage(selectedImage)
+            uploadImageToFirebaseStorage(selectedImage, completion: { (url) in
+                self.sendMessageWith(imageUrl: url, image: selectedImage)
+            })
+        }
+    }
+
+    private func handleVideoSelectedFor(url: URL) {
+        let filename = NSUUID().uuidString + ".mov"
+
+        let uploadTask = FIRStorage.storage().reference().child("message_videos").child(filename).putFile(url, metadata: nil, completion: { (metadata, error) in
+            if let error = error {
+                print(error)
+                return
+            }
+
+            if let videoUrl = metadata?.downloadURL()?.absoluteString {
+                if let thumbnailImage = self.thumbnailImageFor(fileUrl: url) {
+                    self.uploadImageToFirebaseStorage(thumbnailImage, completion: { (url) in
+                        self.sendMessageWith(videoUrl: videoUrl, image: thumbnailImage, imageUrl: url)
+                    })
+                }
+            }
+        })
+
+        uploadTask.observe(.progress) { (snapshot) in
+            if let comletedUnitCount = snapshot.progress?.completedUnitCount {
+                self.navigationItem.title = String(comletedUnitCount)
+            }
         }
 
-        dismiss(animated: true, completion: nil)
+        uploadTask.observe(.success) { (snapshot) in
+            self.navigationItem.title = self.user?.name
+        }
+    }
+
+    private func thumbnailImageFor(fileUrl: URL) -> UIImage? {
+        let asset = AVAsset(url: fileUrl)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+
+        do {
+            let thumbnailImage = try imageGenerator.copyCGImage(at: CMTimeMake(1, 60), actualTime: nil)
+            return UIImage(cgImage: thumbnailImage)
+        } catch let error {
+            print(error)
+        }
+
+        return nil
     }
 }
 
