@@ -140,7 +140,7 @@ class ChatMessageCollectionViewCell: UICollectionViewCell {
     }
 
     func handleImageTap(tapGesture: UITapGestureRecognizer) {
-        if message?.videoUrl != {
+        if message?.videoUrl != nil {
             return
         }
 
