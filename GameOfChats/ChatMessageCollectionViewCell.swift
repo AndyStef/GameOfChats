@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ChatMessageCollectionViewCell: UICollectionViewCell {
 
@@ -54,10 +55,32 @@ class ChatMessageCollectionViewCell: UICollectionViewCell {
         return image
     }()
 
+    lazy var playButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "icon-play"), for: .normal)
+        button.tintColor = UIColor.white
+        button.addTarget(self, action: #selector(handlePlayVideo), for: .touchUpInside)
+
+        return button
+    }()
+
+    let activityIndicatorView: UIActivityIndicatorView = {
+        let aiv = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        aiv.translatesAutoresizingMaskIntoConstraints = false
+        aiv.hidesWhenStopped = true
+        aiv.isHidden = true
+
+        return aiv
+    }()
+
     var bubbleWidthAnchor: NSLayoutConstraint?
     var bubbleViewRightAnchor: NSLayoutConstraint?
     var bubbleViewLeftAnchor: NSLayoutConstraint?
     var chatLogController: ChatLogViewController?
+    var message: Message?
+    var playerLayer: AVPlayerLayer?
+    var player: AVPlayer?
 
     //MARK: - Cell  initialization
     override init(frame: CGRect) {
@@ -90,18 +113,56 @@ class ChatMessageCollectionViewCell: UICollectionViewCell {
         messageImageView.topAnchor.constraint(equalTo: bubbleView.topAnchor).isActive = true
         messageImageView.widthAnchor.constraint(equalTo: bubbleView.widthAnchor).isActive = true
         messageImageView.heightAnchor.constraint(equalTo: bubbleView.heightAnchor).isActive = true
+
+        bubbleView.addSubview(playButton)
+        playButton.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        playButton.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        playButton.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        playButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+
+        bubbleView.addSubview(activityIndicatorView)
+        activityIndicatorView.centerXAnchor.constraint(equalTo: bubbleView.centerXAnchor).isActive = true
+        activityIndicatorView.centerYAnchor.constraint(equalTo: bubbleView.centerYAnchor).isActive = true
+        activityIndicatorView.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        activityIndicatorView.heightAnchor.constraint(equalToConstant: 44).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+        activityIndicatorView.stopAnimating()
+    }
+
     func handleImageTap(tapGesture: UITapGestureRecognizer) {
+        if message?.videoUrl != {
+            return
+        }
+
         guard let imageView = tapGesture.view as? UIImageView else {
             return
         }
         
         //TODO: is that better to do this way or using closures
         chatLogController?.handleZoomFor(image: imageView)
+    }
+
+    func handlePlayVideo() {
+        guard let videoUrl = message?.videoUrl, let url = URL(string: videoUrl) else {
+            return
+        }
+
+        player = AVPlayer(url: url)
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer?.frame = bubbleView.bounds
+        bubbleView.layer.addSublayer(playerLayer!)
+        player?.play()
+        activityIndicatorView.startAnimating()
+        playButton.isHidden = true
     }
 }

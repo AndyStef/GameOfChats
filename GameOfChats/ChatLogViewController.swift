@@ -138,6 +138,7 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! ChatMessageCollectionViewCell
         cell.chatLogController = self
         let message = messages[indexPath.item]
+        cell.message = message
         //TODO: - what is difference between indexPath.item and row
         cell.textView.text = message.text
         setupCell(cell, message: message)
@@ -150,6 +151,8 @@ extension ChatLogViewController: UICollectionViewDelegateFlowLayout {
             cell.bubbleWidthAnchor?.constant = 200
             cell.textView.isHidden = true
         }
+
+        cell.playButton.isHidden = message.videoUrl == nil
 
         return cell
     }
