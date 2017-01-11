@@ -27,6 +27,9 @@ class MessagesViewController: UITableViewController {
         tableView.register(UserTableViewCell.self, forCellReuseIdentifier: cellId)
 
         checkIfUserIsLoggedIn()
+
+        //MARK: not sure if this is neccessary
+        tableView.allowsSelectionDuringEditing = true
     }
 
     //MARK: - API methods
@@ -143,6 +146,33 @@ extension MessagesViewController {
             self.showChatControllerFor(user: user)
         })
     }
+
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return
+        }
+
+        let message = self.messages[indexPath.row]
+
+        if let chatPartnerId = message.chatPartnerId() {
+            FIRDatabase.database().reference().child("user-message").child(uid).child(chatPartnerId).removeValue(completionBlock: { (error, reference) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }
+
+                self.messagesDictionary.removeValue(forKey: chatPartnerId)
+                self.attempReloadOfData()
+
+                self.messages.remove(at: indexPath.row)
+                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            })
+        }
+    }
 }
 
 //MARK: - Events and handlers
@@ -190,6 +220,12 @@ extension MessagesViewController {
                 self.fetchMessageWith(messageId: messageId)
             })
         })
+
+        reference.observe(.childRemoved, with: { (snapshot) in
+            self.messagesDictionary.removeValue(forKey: snapshot.key)
+            //TODO: - Google what is difference between attempReloadOfTable and attempReloadOfData
+            self.attempReloadOfData()
+        })
     }
 
     //TODO: move this out to client API
@@ -209,7 +245,7 @@ extension MessagesViewController {
         })
     }
 
-    private func attempReloadOfData() {
+    func attempReloadOfData() {
         //MARK: - Thats a trick to fight multiple reloads of table
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
