@@ -15,63 +15,11 @@ import MobileCoreServices
 class ChatLogViewController: UICollectionViewController {
 
     //MARK: - Variables
-    lazy var inputTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Type your message here"
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.delegate = self
 
-        return textField
-    }()
+    lazy var inputContainerView: ChatInputContainerView = {
+        let containerView = ChatInputContainerView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50))
+        containerView.chatLogController = self
 
-    lazy var inputContainerView: UIView = {
-        let containerView = UIView()
-        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
-        containerView.backgroundColor = UIColor.white
-
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = #imageLiteral(resourceName: "PickImage")
-        imageView.contentMode = .scaleAspectFill
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handlePickImageTap)))
-        imageView.isUserInteractionEnabled = true
-
-        containerView.addSubview(imageView)
-        imageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-
-        //send button
-        let sendButton = UIButton(type: .system)
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.setTitle("Send", for: .normal)
-        sendButton.addTarget(self, action: #selector(handleSendTap), for: .touchUpInside)
-
-        containerView.addSubview(sendButton)
-        sendButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        sendButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        sendButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-    
-        //text field
-        containerView.addSubview(self.inputTextField)
-        self.inputTextField.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 8).isActive = true
-        self.inputTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor, constant: 8).isActive = true
-        self.inputTextField.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        self.inputTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-    
-        //separator
-        let separatorView = UIView()
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.backgroundColor = UIColor.gray
-
-        containerView.addSubview(separatorView)
-        separatorView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        separatorView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        separatorView.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
-        separatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
-    
         return containerView
     }()
     
@@ -283,7 +231,7 @@ extension ChatLogViewController {
                 return
             }
 
-            self.inputTextField.text = nil
+            self.inputContainerView.inputTextField.text = nil
 
             let userMessageReference = FIRDatabase.database().reference().child("user-message").child(fromId).child(toId)
             let messageId = childReference.key
@@ -298,7 +246,7 @@ extension ChatLogViewController {
 //MARK: - Events and handlers
 extension ChatLogViewController {
     func handleSendTap() {
-        guard let text = inputTextField.text else {
+        guard let text = inputContainerView.inputTextField.text else {
             return
         }
 
